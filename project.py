@@ -90,7 +90,11 @@ class BST:
         
 
             
-            
+ 
+class HeapNode:
+    def __init__(self, id, priority):
+        self.id = id
+        self.priority = priority         
 class MaxHeap:
     def __init__(self):
          self.heap = []
@@ -102,11 +106,12 @@ class MaxHeap:
         else:
             return True
     def insertHeap(self, id, priority):
-        self.heap.append((id, priority))
+        node = HeapNode(id,priority)
+        self.heap.append(node)
         index = self.sizemaxheap() - 1
         while index > 0:
             parent = (index - 1) // 2
-            if self.heap[index][1] > self.heap[parent][1]:
+            if self.heap[index].priority > self.heap[parent].priority:
                 self.heap[index], self.heap[parent] = self.heap[parent], self.heap[index]
                 index = parent
             else:
@@ -116,13 +121,13 @@ class MaxHeap:
         left = 2 * index + 1
         right = 2 * index + 2
 
-        if left < n and self.heap[left][1] > self.heap[index][1]:
+        if left < n and self.heap[left].priority > self.heap[index].priority:
             largest = left
         else:
             largest = index
 
 
-        if right < n and self.heap[right][1] > self.heap[largest][1]:
+        if right < n and self.heap[right].priority > self.heap[largest].priority:
             largest = right
 
         if largest != index:
@@ -145,29 +150,28 @@ class MaxHeap:
         return max_item
     
     def deleteRequest(self, id):
-        index = -1
-        n = self.sizemaxheap()
+        index = self.sizemaxheap() - 1
 
-        for i in range(n):
-            if self.heap[i][0] == id:
-                index = i
+        while index >= 0:
+            if self.heap[index].id == id:
                 break
+            index -= 1
 
         if index == -1:
             print(f"Request with ID {id} not found in Heap.")
             return
 
-        if index == n - 1:
+        if index == self.sizemaxheap() - 1 :
             self.heap.pop()
             return
 
         self.heap[index] = self.heap.pop()
 
         parent = (index - 1) // 2
-        if index > 0 and self.heap[index][1] > self.heap[parent][1]:
+        if index > 0 and self.heap[index].priority > self.heap[parent].priority:
             while index > 0:
                 parent = (index - 1) // 2
-                if self.heap[index][1] > self.heap[parent][1]:
+                if self.heap[index].priority > self.heap[parent].priority:
                     self.heap[index], self.heap[parent] = self.heap[parent], self.heap[index]
                     index = parent
                 else:
@@ -178,43 +182,44 @@ class MaxHeap:
 
     
     def printMaxHeap(self):
-            for item in self.heap:
-                print(f"ID: {item[0]}, Priority: {item[1]}")
+            for node in self.heap:
+                print(f"ID: {node.id}, Priority: {node.priority}")
                 
   
     def increasePriority(self, id, newPriority):
     
-        index = -1
-        n = self.sizemaxheap()
-        i = 0
-        while i < n:
-            if self.heap[i][0] == id:
-                index = i
-                break
-            i += 1 
+        i = self.sizemaxheap() - 1 
         
-        if index == -1: #not found
+        while i >= 0:
+            if self.heap[i].id == id:
+                
+                
+                
+                break
+            i -= 1 
+        
+        if i == -1: #not found
             return
 
     
-        if newPriority <= self.heap[index][1]: #old piority > new priority
+        if newPriority <= self.heap[i].priority:  #old piority > new priority
             return
 
     
-        self.heap[index] = (id, newPriority)
-        while index > 0:
-            parent = (index - 1) // 2
-            if self.heap[index][1] > self.heap[parent][1]:
-                self.heap[index], self.heap[parent] = self.heap[parent], self.heap[index]
-                index = parent
+        self.heap[i].priority = newPriority
+        while i > 0:
+            parent = (i - 1) // 2
+            if self.heap[i].priority > self.heap[parent].priority:
+                self.heap[i], self.heap[parent] = self.heap[parent], self.heap[i]
+                i = parent
             else:
                 break
             
     def processHighestPriorityRequest(self, bst):
         request = self.deleteMaxHeap()
         if request:
-            bst.deleteRequest(request[0])
-        
+            bst.deleteRequest(request.id)
+         
 
 # bst = BST()
 # heap = MaxHeap()
